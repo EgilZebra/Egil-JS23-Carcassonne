@@ -1,0 +1,51 @@
+name: Carcassonne
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  # test:
+
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Install
+  #       run: npm ci
+  #     - name: run tests with coverage
+  #       run: npm run coverage
+  #     - name: Check the coverage
+  #       uses: themichaelhall/check-code-coverage@v2
+  #       with:
+  #         report: coverage/clover.xml
+  #         required-percentage: 90
+
+  build:
+
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install modules
+        run: npm install
+      - name: Build dist
+        run: npm run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Debug Environment Variables
+        run: printenv
+      - name: Upload dist folder
+        uses: actions/upload-pages-artifact@v1
+        with: 
+          path: './dist'
+      - name: Deploy to Github pages
+        id: deployment
+        uses: actions/deploy-pages@v1
