@@ -21,7 +21,7 @@ body {
     height: 90%;
 }
 
-#canvasAlt {
+/* #canvasAlt {
     position: absolute;
     border: solid 3px black;
     top: 56%;
@@ -31,4 +31,4 @@ body {
     height: 70%;
     background-color: blue;
     z-index: 1;
-}
+} */
