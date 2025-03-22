@@ -234,7 +234,7 @@ if (canvas) {
             // click on drawnTile
             if ( scaledMouseX > 50 && scaledMouseX < 50+240 && scaledMouseY > 350 && scaledMouseY < 350+240 ){
                 
-                console.log('clicked inside');
+                //console.log('clicked inside');
                 console.log(drawNewTile.connect);
                 moveTiletoggle = true;
 
@@ -440,7 +440,7 @@ if (canvas) {
         }
         
         const updateUsedTiles = (): void => {
-            console.log(gameMap);
+            //console.log(gameMap);
             gameMap.forEach((row, colIndex) => {
                 row.forEach((tile, rowIndex) => {
                     const tileCordinates = {col: colIndex, row: rowIndex};           
@@ -449,7 +449,7 @@ if (canvas) {
                     }
                 });
             });
-            console.log(usedTiles);
+            //console.log(usedTiles);
             updatePlayableTiles();
         }
         const updatePlayableTiles = (): void => {
@@ -477,8 +477,8 @@ if (canvas) {
                 checkAndAddPlayableTile(col, row + 1);
                 checkAndAddPlayableTile(col, row - 1);
             });
-            console.log({playableTiles : playableTiles});
-            console.log({usedTiles: usedTiles})
+            //console.log({playableTiles : playableTiles});
+            //console.log({usedTiles: usedTiles})
         }
 
         const checkAjecentTiles = (col:number, row:number, tile: Tile): boolean => {
@@ -539,91 +539,123 @@ if (canvas) {
                     }
                 }
             });
-
-            // if ( usedTiles.some(t => t.col == (col +1) &&  t.row == row) ){
-            //     const checkType = gameMap[col +1][row].connect[3]
-            //     console.log('right')
-            //     checkConnections({col: col, row: row}, {col: col+1, row: row}, checkType)
-            // }
-            // if ( usedTiles.some(t => t.col == (col -1) &&  t.row == row) ){
-            //     const checkType = gameMap[col -1][row].connect[1]
-            //     console.log('left')
-            //     checkConnections({col: col, row: row}, {col: col -1, row: row}, checkType)
-            // }
-            // if ( usedTiles.some(t => t.col == col &&  t.row == (row +1))){
-            //     const checkType = gameMap[col][row +1].connect[0]
-            //     console.log('down')
-            //     checkConnections({col: col, row: row}, {col: col, row: row +1}, checkType)
-            // }
-            // if ( usedTiles.some(t => t.col == col &&  t.row == (row -1)) ){
-            //     const checkType = gameMap[col][row -1].connect[2]
-            //     console.log('up')
-            //     checkConnections({col: col, row: row}, {col: col, row: row -1}, checkType)
-            // }
-            //closedConnections();
+            connectRoads({col, row});
         }
         const checkConnections = (newTile: TileCordinates, checkTile: TileCordinates, type: string, connections: Array<Connection>) => {
             console.log({message: 'checkconnections', type: type});
             const newConnections: Connection[] = [];
+            let nonAdded = true;
             if (type == 'R' && connections.length > 0){
+                let connectionsChecked = 0;
+                console.log('checking connect R');
+                let connectionsNotAdded = 0;
                 connections.forEach((connection) => { 
-                    if (connection.type == type && connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)) {
+                    console.log('Checking', connection)
+                    if (
+                        nonAdded
+                        && connection.type == type 
+                        && connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)
+                    ) {
                         const compareConnect: string[] = gameMap[checkTile.col][checkTile.row].connect;
                         const typeNumber = compareConnect.filter((x) => {
                             return x == 'R';
                         })
                         console.log({typeNumber: typeNumber})
-                        if (typeNumber.length == 2  && !connection.span.some(t => t.col == newTile.col && t.row == newTile.row) ){
-                            console.log('add connectopn')
+                        if (
+                            typeNumber.length == 2  
+                            && !connection.span.some(t => t.col == newTile.col && t.row == newTile.row) 
+                        ){
+                            console.log('add connectopn newRoad')
                             connection.add(newTile);
+                            nonAdded = false;
                         } else {
-                            const newConnection: Connection = new Connection({type: type, tile: newTile, user: 'player' });
-                            console.log('new connectopn')
-                            newConnection.add(checkTile);
-                            newConnection.add(newTile);
-                            newConnections.push(newConnection);  
+                            connectionsNotAdded++;  
                         }
-                    } else {
-                        console.log('all new connect')
+                        connectionsChecked++
+                    } else if ( 
+                        nonAdded
+                        &&connection.type == type 
+                        && !connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)
+                        && connection.span.some(t => t.col == newTile.col && t.row == newTile.row) 
+                    ) {
+                        console.log('add connectopn checkRoad')
+                        connection.add(newTile);
+                        nonAdded = false;
+                    } else if ( 
+                        nonAdded
+                        && connection.type == type
+                        && connectionsChecked == connectionsNotAdded 
+                    ) {
+                        console.log('all new connect Road')
                         console.log(connection);
                         const newConnection = new Connection({type: type, tile: newTile, user: 'player' });
                         newConnection.add(newTile);
                         newConnection.add(checkTile);
                         newConnections.push(newConnection);
+                        nonAdded = false;
                     }   
                 })  
                 connectedTiles.push(...newConnections);
             } else if ( type == "C"  && connections.length > 0){
+                console.log('checking connect C')
+                let connectionsChecked = 0;
+                let connectionsNotAdded = 0;
                 connections.forEach((connection) => {
-                    if (connection.type == 'C' && !connection.span.some(t => t.col == newTile.col && t.row ==newTile.row)) {
+                    console.log('checking', connection)
+                    if (
+                        nonAdded
+                        && connection.type == 'C' 
+                        && !connection.span.some(t => t.col == newTile.col && t.row == newTile.row)
+                    ) {
                         const compareConnect: string[] = gameMap[checkTile.col][checkTile.row].connect;
                         const typeNumber = compareConnect.filter((x) => {
                             return x == 'C';
                         })
-                        if (typeNumber.length > 1  && !connection.span.some(t => t.col == newTile.col && t.row ==newTile.row) && gameMap[checkTile.col][checkTile.row].cityConnect == true ){
+                        if (
+                            typeNumber.length > 1  
+                            && !connection.span.some(t => t.col == newTile.col && t.row ==newTile.row) 
+                            && gameMap[checkTile.col][checkTile.row].cityConnect == true 
+                        ){
                             console.log('add connectopn')
                             connection.add(newTile);
-                        } else if ( typeNumber.length == 1 && !connection.span.some(t => t.col == newTile.col && t.row ==newTile.row) ){
+                            nonAdded = false;
+                        } else if ( 
+                            typeNumber.length == 1 
+                            && !connection.span.some(t => t.col == newTile.col && t.row ==newTile.row) 
+                        ){
                             console.log('add connectopn')
                             connection.add(newTile);
+                            nonAdded = false;
                         } else {
-                            console.log('new connectopn')
-                            const newConnection = new Connection({type: type, tile: newTile, user: 'player' });
-                            newConnection.add(checkTile);
-                            newConnection.add(newTile);
-                            newConnections.push(newConnection); 
+                            connectionsNotAdded++;
                         }
-                    } else {
+                        connectionsChecked++;
+                    } else if ( 
+                        nonAdded
+                        && connection.type == 'C' 
+                        && connection.span.some(t => t.col == newTile.col && t.row == newTile.row 
+                        && lastTilePlayed.cityConnect == true)
+                    ) {
+                            console.log('add connectopn')
+                            connection.add(newTile);
+                            nonAdded = false;
+                    } else if ( 
+                        nonAdded
+                        && connection.type == type 
+                        && connectionsChecked == connectionsNotAdded
+                    ) {
                         console.log('all new connect')
                         const newConnection = new Connection({type: type, tile: newTile, user: 'player' });
                         newConnection.add(newTile);
                         newConnection.add(checkTile);
                         newConnections.push(newConnection)
+                        nonAdded = false;
                     }
                     
                 }) 
                 connectedTiles.push(...newConnections);
-            } else if ( connectedTiles.length < 1 || !connections.some(t => t.type == type) ) {
+            }
+             if ( connectedTiles.length < 1 || !connections.some(t => t.type == type) ) {
                 console.log('newconnection', connectedTiles.length);
                 const newConnection = new Connection({type: type, tile: newTile, user: 'player' });
                 newConnection.add(checkTile);
@@ -632,6 +664,45 @@ if (canvas) {
                 connectedTiles.push(newConnection); 
             }
             closedConnections();
+        }
+
+        const connectRoads = (newTile: TileCordinates) => {
+            console.log('connectRoads');
+            let connectionIndexes: number[] = [];
+            const toBeConnected: Connection[] = [];
+            const newConnection: Connection = new Connection({ type: 'R', span: [], user: 'player'});
+            const gameTile = gameMap[newTile.col][newTile.row].connect;
+            let tileRoads = 0;
+            gameTile.forEach(element => {
+                if ( element == 'R' ) {
+                    tileRoads++
+                }
+            });
+            connectedTiles.forEach((connection, index) => {
+                if ( 
+                    connection.span.some(t => t.col == newTile.col && t.row == newTile.row) 
+                    && tileRoads ==2
+                ) {
+                    toBeConnected.push(connection);
+                    connectionIndexes.push(index);
+                }
+            })
+            if ( connectionIndexes.length > 1) {
+                console.log('connecting roads!', toBeConnected)
+                toBeConnected.forEach((tile) => {
+                    tile.span.forEach(element => {
+                        if ( !newConnection.span.some(t => t.col == element.col && t.row == element.row)) {
+                            newConnection.span.push(element);
+                        }
+                    });
+                })
+                connectionIndexes.forEach((id) => {
+                    console.log(id)
+                    connectedTiles.splice(id, 1);
+                    console.log('spliced!', connectedTiles)
+                })
+                connectedTiles.push(newConnection)
+            }
         }
 
         const closedConnections = () => {
@@ -648,7 +719,7 @@ if (canvas) {
                             console.log(singelRoadTiles);
                         };
                     })
-                    if (singelRoadTiles == 2 && !finishedConnections.includes(connection)) {
+                    if (singelRoadTiles == 2 && !finishedConnections.some(c => c == connection)) {
                         finishedConnections.push(connection);
                     }
                 } else if ( connection.type == 'C'){
@@ -661,7 +732,7 @@ if (canvas) {
                             singelRoadTiles++
                         };
                     })
-                    if (singelRoadTiles == 2 && !finishedConnections.includes(connection)) {
+                    if (singelRoadTiles == 2 && !finishedConnections.some(c => c == connection)) {
                         finishedConnections.push(connection);
                     }
                 }

@@ -16,5 +16,8 @@
     "url": "https://github.com/EgilZebra/Egil-JS23-Carcassonne/issues"
   },
   "homepage": "https://github.com/EgilZebra/Egil-JS23-Carcassonne#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "node": "^20.19.0"
+  }
 }
