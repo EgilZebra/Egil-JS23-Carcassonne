@@ -11,6 +11,7 @@ interface TileOptions {
     monastery: boolean;
     badge: boolean;
     cityConnect: boolean;
+    roadConnect: boolean
 }
 
 export const allTiles: TileOptions[] = [{
@@ -23,6 +24,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: true,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -33,6 +35,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: true,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -43,6 +46,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: true,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -53,6 +57,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -63,6 +68,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: true,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -73,6 +79,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -83,6 +90,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -93,6 +101,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -103,6 +112,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -113,6 +123,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -123,6 +134,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -133,6 +145,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -143,6 +156,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -153,6 +167,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: true,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -163,6 +178,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: true,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -173,6 +189,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -183,6 +200,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -193,6 +211,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -203,6 +222,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -213,6 +233,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -223,6 +244,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -233,6 +255,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -243,6 +266,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: true,
                 badge: true,
                 cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -253,6 +277,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: true,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -263,6 +288,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -273,6 +299,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: true
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -283,6 +310,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -293,6 +321,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -303,6 +332,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -312,7 +342,8 @@ export const allTiles: TileOptions[] = [{
                 connections: ['F', 'F', 'R', 'F'],
                 monastery: false,
                 badge: false,
-                cityConnect: false,
+                cityConnect: true,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -323,6 +354,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -333,6 +365,7 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },{
                 image: '../../../assets/tiles.png', 
                 width: 200,
@@ -343,5 +376,6 @@ export const allTiles: TileOptions[] = [{
                 monastery: false,
                 badge: false,
                 cityConnect: false,
+                roadConnect: false
             },
         ];
