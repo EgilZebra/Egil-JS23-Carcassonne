@@ -45,7 +45,9 @@ jobs:
       - name: Upload dist folder
         uses: actions/upload-pages-artifact@v3
         with: 
-          path: '.'
+          path: './dist'
       - name: Deploy to Github pages
         id: deployment
         uses: actions/deploy-pages@v3
+        with:
+          folder: dist
