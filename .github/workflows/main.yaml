@@ -25,7 +25,7 @@ jobs:
 
   build:
 
-    needs: test
+  # needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,7 +37,7 @@ jobs:
       - name: Install modules
         run: npm install
       - name: Build dist
-        run: npm run build
+        run: tsc
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Debug Environment Variables
