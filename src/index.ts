@@ -2,21 +2,177 @@
 // import { Direction } from './data/types/connections';
 import { allTiles } from "./data/tiles/tiles.js";
 console.log('Hello');
+
+type TileCordinates = {
+    col: number
+    row: number
+}
+interface TileOptions {
+    image: string;
+    width: number;
+    height: number;
+    imageStartX: number;
+    imageStartY: number;
+    connections: string[];
+    monastery: boolean;
+    badge: boolean;
+    cityConnect: boolean;
+    roadConnect: boolean
+}
+class Tile {
+    image: string
+    width: number
+    height: number
+    imageStartX: number
+    imageStartY: number
+    connect: string[]
+    monastery: boolean
+    cityBadge: boolean
+    cityConnect: boolean
+    roadConnect: boolean
+    private rotationAngle: number
+    private img: HTMLImageElement
+    constructor({
+            image, 
+            width,
+            height,
+            imageStartX,
+            imageStartY,
+            connections,
+            monastery,
+            badge,
+            cityConnect,
+            roadConnect
+        }: TileOptions ){
+            this.image = image,
+            this.width = width,
+            this.height = height,
+            this.imageStartX = imageStartX,
+            this.imageStartY = imageStartY,
+            this.connect = connections,
+            this.monastery = monastery,
+            this.cityBadge = badge,
+            this.cityConnect = cityConnect,
+            this.roadConnect = roadConnect
+            this.rotationAngle = 0,
+            this.img = new Image(),
+            this.img.src = this.image
+    }
+    update(){
+        
+    }
+    draw(ctx: CanvasRenderingContext2D, dx: number, dy: number, dWidth: number, dHeight: number){
+        ctx.save();
+        ctx.translate(dx + dWidth / 2, dy + dHeight / 2);
+        ctx.rotate((this.rotationAngle * Math.PI) / 180);
+        ctx.drawImage(this.img, this.imageStartX, this.imageStartY, this.width, this.height, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
+        ctx.restore();       
+    }
+    rotate(){
+        this.rotationAngle += 90;
+        const lastDirection: string | undefined = this.connect.pop();
+        if (lastDirection !== undefined) {
+            this.connect.unshift(lastDirection);
+        };
+        
+    }
+}
+class Turn {
+    player: string
+    turn: number
+    drawTile: boolean
+    TileDrawn: Tile
+    placeTile: boolean
+    TilePlace: TileCordinates
+    placeMeeple: boolean
+    MeeplePlaced: any
+    endTurn: boolean
+    constructor(
+        player: string,
+        turn: number,
+        drawTile: boolean,
+        TileDrawn: Tile,
+        placeTile: boolean,
+        TilePlace: TileCordinates,
+        placeMeeple: boolean,
+        MeeplePlaced: any,
+        endTurn: boolean,
+    ){
+        this.player = player
+        this.turn = turn
+        this.drawTile = drawTile
+        this.TileDrawn = TileDrawn
+        this.placeTile = placeTile
+        this.TilePlace = TilePlace
+        this.placeMeeple = placeMeeple
+        this.MeeplePlaced = MeeplePlaced
+        this.endTurn = endTurn
+    };
+}
+class Connection {
+    type: string
+    span: Array<TileCordinates>
+    user: string[]
+    constructor({
+        type,
+        span = [],
+        user
+    }: any ){
+        this.type = type;
+        this.span = span;
+        this.user = user
+    }
+    add(tile: TileCordinates){
+        this.span.push(tile);
+    }
+}
+
 const canvas = document.getElementById('canvasMain') as HTMLCanvasElement | null;
 if (canvas) {
     const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d');
     if (ctx){
         const CANVAS_WIDTH: number = canvas.width = 1808;
         const CANVAS_HEIGHT: number = canvas.height = 980;
-        const LOGO = new Image;
-        LOGO.src = '../assets/Carcassonne-logo.png'
-        const gamePoints: number = 0;
-        const gameTurn: number = 1;
+
+        const avaliblePlayers = [
+            { name: 'player1' ,  color: 'blue'},
+            { name: 'player2' ,  color: 'green'},
+            { name: 'player3' ,  color: 'yellow'},
+            { name: 'player4' ,  color: 'red'},
+            { name: 'player5' ,  color: 'black'},
+        ]
+        let completedTurns: Turn[] = [];
+        const players = 2;
+        let currentPlayer = 0;
+       
+        let oneTurn = {
+            player: avaliblePlayers[currentPlayer].name, 
+            turn: 1,
+            drawTile: true,
+            placeTile: false,
+            placeMeeple: false,
+            turnOver: false
+        }
+        let user = avaliblePlayers[currentPlayer];
+        let gamePoints: number = 0;
+        let gameTurn: number = 1;
+        const allPlayersStats: {name: string, remainingMeeples: number, color: string, points: number}[] = []; 
+        for ( let i = 0; i < players; i++) {
+            const player = {
+                name: user.name,
+                remainingMeeples: 7,
+                color: user.color,
+                points: 0
+            }
+            allPlayersStats.push(player);
+        }
 
         // const LOGOPath: string = '../assets/Carcassonne-logo.png'
         const tilePath: string = '../assets/tiles.png';
         const backsidePath: string = '../assets/backside.jpg';
         const meeplesPath: string = '../assets/meeples.png';
+        const LOGO = new Image;
+        LOGO.src = '../assets/Carcassonne-logo.png'
 
         let zoomFactor = 1; 
         const zoomSpeed = 0.1;
@@ -34,8 +190,6 @@ if (canvas) {
         let gameBoardHeight = 750;
         const gameBoardTiles = 20;
         const playableTilesBorderWidth = 3;
-
-   
 
         let playableTiles: TileCordinates[] = [];
         const usedTiles: TileCordinates[] = [];
@@ -59,108 +213,17 @@ if (canvas) {
             'red',
             'black',
         ]
-        const userColor: string = playerColors[0]
+
         const maxMeeples: number = 7;
-        let MeeplesLeft: number = 7;
+        let placedMeeples: {col: number, row: number, color: string}[]  = [];
+        const meepleImage: HTMLImageElement = new Image();
+        meepleImage.src = meeplesPath;
 
         let connectedTiles: Array<Connection> = [];
         let finishedConnections: Array<Connection> = [];
-
+    
         
         
-        type TileCordinates = {
-            col: number
-            row: number
-        }
-
-        interface TileOptions {
-            image: string;
-            width: number;
-            height: number;
-            imageStartX: number;
-            imageStartY: number;
-            connections: string[];
-            monastery: boolean;
-            badge: boolean;
-            cityConnect: boolean;
-            roadConnect: boolean
-        }
-        class Tile {
-            image: string
-            width: number
-            height: number
-            imageStartX: number
-            imageStartY: number
-            connect: string[]
-            monastery: boolean
-            cityBadge: boolean
-            cityConnect: boolean
-            roadConnect: boolean
-            private rotationAngle: number
-            private img: HTMLImageElement
-            constructor({
-                    image, 
-                    width,
-                    height,
-                    imageStartX,
-                    imageStartY,
-                    connections,
-                    monastery,
-                    badge,
-                    cityConnect,
-                    roadConnect
-                }: TileOptions ){
-                    this.image = image,
-                    this.width = width,
-                    this.height = height,
-                    this.imageStartX = imageStartX,
-                    this.imageStartY = imageStartY,
-                    this.connect = connections,
-                    this.monastery = monastery,
-                    this.cityBadge = badge,
-                    this.cityConnect = cityConnect,
-                    this.roadConnect = roadConnect
-                    this.rotationAngle = 0,
-                    this.img = new Image(),
-                    this.img.src = this.image
-            }
-            update(){
-                
-            }
-            draw(ctx: CanvasRenderingContext2D, dx: number, dy: number, dWidth: number, dHeight: number){
-                ctx.save();
-                ctx.translate(dx + dWidth / 2, dy + dHeight / 2);
-                ctx.rotate((this.rotationAngle * Math.PI) / 180);
-                ctx.drawImage(this.img, this.imageStartX, this.imageStartY, this.width, this.height, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
-                ctx.restore();       
-            }
-            rotate(){
-                this.rotationAngle += 90;
-                const lastDirection: string | undefined = this.connect.pop();
-                if (lastDirection !== undefined) {
-                    this.connect.unshift(lastDirection);
-                };
-                
-            }
-        }
-
-        class Connection {
-            type: string
-            span: Array<TileCordinates>
-            user: string
-            constructor({
-                type,
-                span = [],
-                user
-            }: any ){
-                this.type = type;
-                this.span = span;
-                this.user = user
-            }
-            add(tile: TileCordinates){
-                this.span.push(tile);
-            }
-        }
 
         const firstTile = new Tile({
             image: tilePath, 
@@ -234,9 +297,6 @@ if (canvas) {
             const scaledMouseY = mouseY * scaleY;
             const adjustedMouseX = scaledMouseX - gameBoardX + deltaDragX;
             const adjustedMouseY = scaledMouseY - gameBoardY + deltaDragY;
-            // console.log('Canvas position:', scaledMouseX, scaledMouseY);
-            // console.log('Adjusted Mouse Position:', adjustedMouseX, adjustedMouseY);
-            // console.log('Drag Offsets:', deltaDragX, deltaDragY);
 
             // click on drawnTile
             if ( scaledMouseX > 50 && scaledMouseX < 50+240 && scaledMouseY > 350 && scaledMouseY < 350+240 ){
@@ -253,12 +313,14 @@ if (canvas) {
                 drawNewTile.rotate();
             }
             // click on Draw Tile
-            if ( scaledMouseX > 50 && scaledMouseX < 50+150 && scaledMouseY > 270 && scaledMouseY < 270+50){
+            if ( oneTurn.drawTile && scaledMouseX > 50 && scaledMouseX < 50+150 && scaledMouseY > 270 && scaledMouseY < 270+50){
                 console.log('draw tile');
                 drawTileNumber = Math.floor(Math.random() * allTiles.length);
                 drawNewTile = makeTile(drawTileNumber);
                 updateUsedTiles();
                 updatePlayableTiles();
+                oneTurn.drawTile = false;
+                oneTurn.placeTile = true;
             }
             if (scaledMouseX >= gameBoardX && scaledMouseX <= (gameBoardX + gameBoardWidth) && scaledMouseY >= gameBoardY && scaledMouseY <= (gameBoardY + gameBoardHeight)) {
                 
@@ -280,18 +342,20 @@ if (canvas) {
                 }
                 
             }
-            if (scaledMouseX > 50 && scaledMouseX < 50 + (MeeplesLeft * 25) && scaledMouseY > 700 && scaledMouseY < 700+80){
+            if (scaledMouseX > 50 && scaledMouseX < 50 + (allPlayersStats[currentPlayer].remainingMeeples * 25) && scaledMouseY > 700 && scaledMouseY < 700+80){
                 console.log('mEEEPLE!');
                 moveMeepleToggle = true;
-                MeeplesLeft = (MeeplesLeft - 1 >= 0) ? (MeeplesLeft - 1) : 0;
+                allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples - 1 >= 0) ? (allPlayersStats[currentPlayer].remainingMeeples - 1) : 0;
                 dragMeepleX = scaledMouseX;
                 dragMeepleY = scaledMouseY;
             }
+            if (scaledMouseX > 50 && scaledMouseX < 50 + 160 && scaledMouseY > 762 && scaledMouseY < 762+50){
+                console.log('end turn')
+                oneTurn.turnOver = true;
+                countPoints();
+                switchTurns();
+            }
         } 
-
-        // window.addEventListener('click', function(e){
-        //     checkMouse(e);
-        // });
         canvas.onmousedown = checkMouse;
         canvas.onmouseup = (e) => {
             const canvasRect = canvas.getBoundingClientRect();
@@ -307,6 +371,7 @@ if (canvas) {
             const col = Math.floor(adjustedMouseX / zoomTileWidth);
             const row = Math.floor(adjustedMouseY / zoomTileHeight);
             if ( 
+                oneTurn.placeTile &&
                 moveTiletoggle && 
                 row >= 0 && 
                 row < gameMap.length && 
@@ -338,9 +403,12 @@ if (canvas) {
                 updateUsedTiles();
                 console.log({closed: finishedConnections});
                 console.log({open: connectedTiles});
+                oneTurn.placeTile = false;
+                oneTurn.placeMeeple = true;
             }
 
             if ( 
+                oneTurn.placeMeeple &&
                 moveMeepleToggle && 
                 row == usedTiles[usedTiles.length - 1].row && 
                 col == usedTiles[usedTiles.length - 1].col && 
@@ -357,21 +425,65 @@ if (canvas) {
 
                 if ( (TileX < zoomTileWidth * 0.66 ) && (TileX > zoomTileWidth * 0.33) && (TileY < zoomTileHeight * 0.66) && (TileY > zoomTileHeight * 0.33) ){
                     console.log('centre')
+                    const claimed = claimConnection( 'centre', 'centre', {col: col, row: row});
+                    if (claimed) {
+                        const newMeeple = {col: adjustedMouseX, row: adjustedMouseY, color: user.color};
+                        placedMeeples.push(newMeeple);
+                        oneTurn.placeMeeple = false
+                    } else {
+                        allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
+                    }
                 } else if ( (TileX > TileY) && (TileX < (zoomTileWidth - TileY))){
-                    console.log('top', tile.connect[0])
+                    console.log('top', tile.connect[0]);
+                    const claimed = claimConnection( tile.connect[0], 'top', {col: col, row: row});
+                    if (claimed) {
+                        const newMeeple = {col: adjustedMouseX, row: adjustedMouseY, color: user.color};
+                        placedMeeples.push(newMeeple);
+                        oneTurn.placeMeeple = false
+                    } else {
+                        allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
+                    }
+                   
                 } else if ( (TileX > TileY) && (TileX > (zoomTileWidth - TileY))){
-                    console.log('right', tile.connect[1])
+                    console.log('right', tile.connect[1]);
+                    const claimed = claimConnection( tile.connect[1], 'right', {col: col, row: row});
+                    if (claimed) {
+                        const newMeeple = {col: adjustedMouseX, row: adjustedMouseY, color: user.color};
+                        placedMeeples.push(newMeeple);
+                        oneTurn.placeMeeple = false
+                    } else {
+                        allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
+                    }
+
                 } else if ( (TileX < TileY) && (TileX > (zoomTileWidth - TileY))){
-                    console.log('bottom', tile.connect[2])
+                    console.log('bottom', tile.connect[2]);
+                    const claimed = claimConnection( tile.connect[2], 'bottom', {col: col, row: row});
+                    if (claimed) {
+                        const newMeeple = {col: adjustedMouseX, row: adjustedMouseY, color: user.color};
+                        placedMeeples.push(newMeeple);
+                        oneTurn.placeMeeple = false
+                    } else {
+                        allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
+                    }
                 } else if ( (TileX < TileY) && (TileY < (zoomTileHeight - TileX))){
                     console.log('left', tile.connect[3])
+                    const claimed = claimConnection( tile.connect[3], 'left', {col: col, row: row});
+                    if (claimed) {
+                        const newMeeple = {col: adjustedMouseX, row: adjustedMouseY, color: user.color};
+                        placedMeeples.push(newMeeple);
+                        oneTurn.placeMeeple = false
+                    } else {
+                        allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
+                    }
                 }
+                console.log(placedMeeples);
             }
 
             dragMap = false;
             moveTiletoggle = false;
             moveMeepleToggle = false;
-            MeeplesLeft = (MeeplesLeft + 1 <= 7) ? (MeeplesLeft + 1) : 7;
+            
+            //allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
             
         }
         canvas.onmousemove = (e) => {
@@ -585,6 +697,14 @@ if (canvas) {
                             console.log('add connectopn newRoad')
                             connection.add(newTile);
                             nonAdded = false;
+                        } else if (
+                            typeNumber.length == 1
+                            && connection.span.length == 1
+                            && !connection.span.some(t => t.col == newTile.col && t.row == newTile.row)
+                        ) {
+                            console.log('add connectopn newRoad to a singel-Connection')
+                            connection.add(newTile);
+                            nonAdded = false;
                         } else {
                             connectionsNotAdded++;  
                         }
@@ -605,7 +725,7 @@ if (canvas) {
                     ) {
                         console.log('all new connect Road')
                         console.log(connection);
-                        const newConnection = new Connection({type: type, tile: newTile, user: 'no player' });
+                        const newConnection = new Connection({type: type, tile: newTile, user: ['no player'] });
                         newConnection.add(newTile);
                         newConnection.add(checkTile);
                         newConnections.push(newConnection);
@@ -619,31 +739,47 @@ if (canvas) {
                 let connectionsNotAdded = 0;
                 connections.forEach((connection) => {
                     console.log('checking', connection)
+                    const compareConnectNewTile: string[] = gameMap[newTile.col][newTile.row].connect;
+                    const typeNumberNewTile = compareConnectNewTile.filter((x) => {
+                        return x == 'C';
+                    })
+                    console.log({typeNumber: typeNumberNewTile});
+                    const compareConnectcheckTile: string[] = gameMap[checkTile.col][checkTile.row].connect;
+                    const typeNumberCheckTile = compareConnectcheckTile.filter((x) => {
+                        return x == 'C';
+                    })
+                    console.log({typeNumber: typeNumberCheckTile});
                     if (
                         nonAdded
                         && connection.type == 'C' 
-                        && !connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)
                         && connection.span.some(t => t.col == newTile.col && t.row ==newTile.row)
                     ) {
-                        const compareConnect: string[] = gameMap[newTile.col][newTile.row].connect;
-                        const typeNumber = compareConnect.filter((x) => {
-                            return x == 'C';
-                        })
                         if (
-                            typeNumber.length > 1  
+                            typeNumberNewTile.length > 1  
                             && gameMap[newTile.col][newTile.row].cityConnect == true 
+                            && !connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)
                         ){
                             console.log('add connection Checktile C:connect')
                             connection.add(checkTile);
                             nonAdded = false;
                         } else if ( 
-                            typeNumber.length == 1 
+                            typeNumberNewTile.length == 1 
+                            && !connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)
                         ){
                             console.log('new connection Checktile oneWay')
-                            const newConnection = new Connection({type: type, tile: newTile, user: 'no player' });
+                            const newConnection = new Connection({type: type, tile: newTile, user: ['no player'] });
                             newConnection.add(newTile);
                             newConnection.add(checkTile);
                             newConnections.push(newConnection)
+                            nonAdded = false;
+                        } else if (
+                            typeNumberNewTile.length == 1
+                            && connection.span.length == 1
+                            && connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)
+                            && !connection.span.some(t => t.col == newTile.col && t.row == newTile.row)
+                        ) {
+                            console.log('add connectopn newRoad to a singel-Connection')
+                            connection.add(newTile);
                             nonAdded = false;
                         } else {
                             connectionsNotAdded++;
@@ -654,18 +790,21 @@ if (canvas) {
                         && connection.type == 'C'  
                         && connection.span.some(t => t.col == checkTile.col && t.row == checkTile.row)
                         && !connection.span.some(t => t.col == newTile.col && t.row ==newTile.row)
-                        && gameMap[checkTile.col][checkTile.row].cityConnect == true 
                     ) {
-                        console.log('add connection NewTile C:connect')
-                        connection.add(newTile);
-                        nonAdded = false;
+                        console.log('<-- YES!!')
+                        if ( gameMap[checkTile.col][checkTile.row].cityConnect == true || typeNumberCheckTile.length == 1 ) {
+                            console.log('add connection NewTile C:connect')
+                            connection.add(newTile);
+                            nonAdded = false;
+                        }
+                        
                     } else if ( 
                         nonAdded
                         && connection.type == type 
                         && connectionsChecked == connectionsNotAdded
                     ) {
                         console.log('all new connect')
-                        const newConnection = new Connection({type: type, tile: newTile, user: 'no player' });
+                        const newConnection = new Connection({type: type, tile: newTile, user: ['no player'] });
                         newConnection.add(newTile);
                         newConnection.add(checkTile);
                         newConnections.push(newConnection)
@@ -676,7 +815,7 @@ if (canvas) {
             }
              if ( connectedTiles.length < 1 || !connections.some(t => t.type == type) ) {
                 console.log('newconnection', connectedTiles.length);
-                const newConnection = new Connection({type: type, tile: newTile, user: 'no player' });
+                const newConnection = new Connection({type: type, tile: newTile, user: ['no player'] });
                 newConnection.add(checkTile);
                 newConnection.add(newTile);
                 console.log(newConnection);
@@ -687,8 +826,9 @@ if (canvas) {
         const connectRoads = (newTile: TileCordinates) => {
             console.log('connectRoads');
             let connectionIndexes: number[] = [];
+            let connectionNames: string[] = [];
             const toBeConnected: Connection[] = [];
-            const newConnection: Connection = new Connection({ type: 'R', span: [], user: 'no player'});
+            const newConnection: Connection = new Connection({ type: 'R', span: [], user: ['no player']});
             const gameTile = gameMap[newTile.col][newTile.row].connect;
             let tileRoads = 0;
             gameTile.forEach(element => {
@@ -706,6 +846,7 @@ if (canvas) {
                 ) {
                     console.log('added toBeConnected');
                     toBeConnected.push(connection);
+                    connectionNames = [...connection.user]
                     connectionIndexes.push(index);
                 }
             })
@@ -727,6 +868,13 @@ if (canvas) {
                     const tempConnectedTiles = connectedTiles;
                     console.log('spliced!', tempConnectedTiles)
                 })
+                connectionNames.forEach((name) => {
+                    if (name !== 'no player') {
+                        newConnection.user.push(name);
+                    }
+                    
+                })
+                
                 connectedTiles.push(newConnection)
             }
         }
@@ -735,7 +883,7 @@ if (canvas) {
             console.log('connectCity');
             let connectionIndexes: number[] = [];
             const toBeConnected: Connection[] = [];
-            const newConnection: Connection = new Connection({ type: 'C', span: [], user: 'no player'});
+            const newConnection: Connection = new Connection({ type: 'C', span: [], user: ['no player']});
             const gameTile = gameMap[newTile.col][newTile.row].connect;
             const cityConnect = gameMap[newTile.col][newTile.row].cityConnect;
             let tileCity = 0;
@@ -788,19 +936,47 @@ if (canvas) {
                     connection.span.forEach((tile) => {
                         const connections = gameMap[tile.col][tile.row].connect;
                         const roadConnect = gameMap[tile.col][tile.row].roadConnect;
+                        let surroundTiles = 0;
                         let types = 0;
                         connections.forEach((type) => {if (type == "R"){types++}});
+                        
+                        const directions = [
+                            {dx: 0, dy: -1 },
+                            {dx: 1, dy: 0 },  
+                            {dx: 0, dy: 1 },  
+                            {dx: -1, dy: 0 },  
+                        ];
+                        directions.forEach(({dx, dy}) => {
+                            const newCol = tile.col + dx;
+                            const newRow = tile.row + dy;
+                            if ( 
+                                connection.span.some(c => c.col == newCol && c.row == newRow)
+                            ) {
+                                surroundTiles++
+                            }
+                        });
+                        console.log(surroundTiles, types);
                         if (
                             types == 1
                             || !roadConnect
                         ){
                             singelRoadTiles++
                             console.log(singelRoadTiles);
-                        };
+                        } else if (
+                            types == surroundTiles
+                            && !roadConnect
+                        ) {
+                            singelRoadTiles++
+                            console.log(singelRoadTiles);
+                        }
                     })
-                    if (singelRoadTiles == 2 && !finishedConnections.some(c => c == connection)) {
+                    if (
+                        singelRoadTiles == 2 
+                        && !finishedConnections.some(c => c == connection)
+
+                    ) {
                         finishedConnections.push(connection);
-                    }
+                    } 
                 } else if ( connection.type == 'C'){
                     let cityLimits = 0;
                     connection.span.forEach((tile) => {
@@ -847,9 +1023,179 @@ if (canvas) {
                         }
                     })
                     console.log({cityLimits: cityLimits});
-                    if (cityLimits == connection.span.length && !finishedConnections.some(c => c == connection)) {
+                    if (
+                        connection.span.length > 1
+                        && cityLimits == connection.span.length 
+                        && !finishedConnections.some(c => c == connection)) {
                         finishedConnections.push(connection);
                     }
+                }
+            })
+        }
+
+        const claimConnection = (type: string, direction:  'top' | 'left' | 'bottom' | 'right' | 'centre', tile: TileCordinates ): boolean => {
+            let Claimed = false;
+            const directions = {
+                top: { col: tile.col ,row: tile.row -1 }, 
+                left: { col: tile.col - 1 ,row: tile.row }, 
+                bottom: { col: tile.col ,row: tile.row + 1 }, 
+                right: { col: tile.col + 1 ,row: tile.row }
+            };
+            console.log('claimconnection', type, direction)
+            if ( direction == 'centre' && gameMap[tile.col][tile.row].monastery == true ) {                  
+                const newConnection = new Connection({type: 'M', user: [user.name] });
+                newConnection.span.push({col: tile.col, row: tile.row})
+                connectedTiles.push(newConnection);
+                Claimed = true;
+            }
+            connectedTiles.forEach((connection) => {
+                if ( 
+                    direction == 'top' 
+                    && connection.span.some(c => c.col == tile.col && c.row == tile.row) 
+                    && connection.span.some(c => c.col == (tile.col) && c.row == (tile.row - 1))
+                    && connection.user.some(u => u == 'no player')
+                    && connection.type == type
+                ) {
+                    connection.user = [ user.name ];
+                    Claimed = true;
+                }       
+                if ( 
+                    direction == 'left' 
+                    && connection.span.some(c => c.col == tile.col && c.row == tile.row) 
+                    && connection.span.some(c => c.col == (tile.col - 1) && c.row == (tile.row))
+                    && connection.user.some(u => u == 'no player')
+                    && connection.type == type
+                ){
+                    connection.user = [ user.name ];
+                    Claimed = true;
+                }
+                if ( 
+                    direction == 'bottom' 
+                    && connection.span.some(c => c.col == tile.col && c.row == tile.row) 
+                    && connection.span.some(c => c.col == (tile.col) && c.row == (tile.row + 1))
+                    && connection.user.some(u => u == 'no player')
+                    && connection.type == type
+                ){
+                    connection.user = [ user.name ];
+                    Claimed = true;
+                }
+                if ( 
+                    direction == 'right' 
+                    && connection.span.some(c => c.col == tile.col && c.row == tile.row) 
+                    && connection.span.some(c => c.col == (tile.col + 1) && c.row == (tile.row))
+                    && connection.user.some(u => u == 'no player')
+                    && connection.type == type
+                ){
+                    connection.user = [ user.name ];
+                    Claimed = true;
+                }
+                    
+                if ( 
+                    direction == 'centre'
+                    && gameMap[tile.col][tile.row].cityConnect == true
+                    && connection.span.some(c => c.col == tile.col && c.row == tile.row)
+                    && connection.user.some(u => u == 'no player')
+                    && connection.type == 'C'
+                ) {
+                    connection.user = [ user.name ];
+                    Claimed = true;
+                }
+                if (
+                    direction == 'centre'
+                    && gameMap[tile.col][tile.row].roadConnect == true
+                    && connection.span.some(c => c.col == tile.col && c.row == tile.row)
+                    && connection.user.some(u => u == 'no player')
+                    && connection.type == 'R'
+                ) {
+                    connection.user = [ user.name ];
+                    Claimed = true;
+                }
+                if (   
+                    direction !== 'centre'
+                    && gameMap[directions[direction].col][directions[direction].row].image == backsidePath
+                ) {
+                    console.log('check empty side!')
+                    if ( 
+                        (connection.type == type && !connection.span.some(c => c.col == tile.col && c.row == tile.row))
+                        || (connection.type !== type)
+                    ) {
+                        console.log('new sigle connection with meeple')
+                        const newConnection = new Connection({type: type, user: [user.name] });
+                        newConnection.span.push({col: tile.col, row: tile.row})
+                        connectedTiles.push(newConnection);
+                        Claimed = true;
+                    }    
+                }   
+            })
+            console.log('Claimed', Claimed);
+            return Claimed;
+        }
+        const switchTurns = () => {
+            
+            if (
+                oneTurn.turnOver == true
+            ) {
+                const thisTurn = new Turn(
+                    oneTurn.player, 
+                    gameTurn,
+                    true,
+                    lastTilePlayed,
+                    true,
+                    usedTiles[usedTiles.length -1],
+                    true,
+                    placedMeeples[-1],
+                    oneTurn.turnOver
+                );
+                completedTurns.push(thisTurn);
+                gameTurn++;
+                let Changeplayer: number = currentPlayer;
+                if ( currentPlayer == (players - 1) ) {
+                    Changeplayer = 0;
+                } else  {
+                    Changeplayer++;
+                }
+                currentPlayer = Changeplayer;
+                user = avaliblePlayers[currentPlayer];
+                console.log(currentPlayer);
+                console.log(oneTurn);
+                console.log(completedTurns);
+                oneTurn = {
+                    player: avaliblePlayers[currentPlayer].name, 
+                    turn: 1,
+                    drawTile: true,
+                    placeTile: false,
+                    placeMeeple: false,
+                    turnOver: false
+                }
+            }
+        }
+        const countPoints = () => {
+            finishedConnections.forEach((connection) => {
+                if ( connection.type == 'R' ){
+                    let points = 0;
+                    points = points + connection.span.length;
+                    connection.user.forEach((user) => {
+                        const player = allPlayersStats.find(p => p.name === user);
+                        if (player) {
+                            player.points = points;
+                        }
+                        console.log(player);
+                    })
+                } else if ( connection.type == 'C') {
+                    let points = 0;
+                    points = points + connection.span.length*2;
+                    connection.span.forEach((cordinates) => {
+                        if (gameMap[cordinates.col][cordinates.row].cityBadge == true){
+                            points++
+                        }
+                    })
+                    connection.user.forEach((user) => {
+                        const player = allPlayersStats.find(p => p.name === user);
+                        if (player) {
+                            player.points = points;
+                        }
+                        console.log(player);
+                    })
                 }
             })
         }
@@ -867,7 +1213,7 @@ if (canvas) {
                 ctx.strokeRect(1080, 100, 240, 55);
                 const onlinePlay = ctx.fillText('Play Online', 1400, 140, 200);
                 ctx.strokeRect(1380, 100, 230, 55);
-                const userName = ctx.fillText('Username:', 90, 250, 200);
+                const userName = ctx.fillText(`Username: ${user.name}`, 50, 250, 240);
                 const drawTileText = ctx.fillText('Draw Tile', 55 , 310, 140);
                 ctx.strokeRect(50, 270, 150, 50);
                 const rotateTileText = ctx.fillText('rotate', 205, 310, 100);  
@@ -875,18 +1221,16 @@ if (canvas) {
                 ctx.strokeRect(50, 350, 240, 240);
                 //ctx.fillStyle = 'rgba(217, 217, 217, 1)';
                 const remainingMeeples = ctx.fillText('remaining meeples', 50, 650, 240);
-                const Turn = ctx.fillText( `Turn: ${gameTurn}`, 50, 850, 240);
-                const Points = ctx.fillText(`Points: ${gamePoints}`, 50, 900, 240);
+                const endTurnText = ctx.fillText('End Turn', 50, 800, 240);
+                ctx.strokeRect(50, 762, 160, 50);
+                const TurnText = ctx.fillText( `Turn: ${gameTurn}`, 50, 850, 240);
+                const PointsText = ctx.fillText(`Points: ${allPlayersStats[currentPlayer].points}`, 50, 900, 240);
                 const GameBoard = ctx.fillRect( 320, 200, 1445, 750);
 
                 const drawMeeple = () => {
-                    const meepleImage: HTMLImageElement = new Image();
-                    meepleImage.src = meeplesPath;
-
-                    ctx.save();
-                    //ctx.clip();
-                    for (let i = 0; i < MeeplesLeft; i++){
-                        ctx.drawImage(meepleImage, 0 + (80*playerColors.indexOf(userColor)), 0, 80, 80, 50 + (i * 25), 700, 80, 80);
+                    ctx.save(); 
+                    for (let i = 0; i < allPlayersStats[currentPlayer].remainingMeeples; i++){
+                        ctx.drawImage(meepleImage, 0 + (meepleSize*playerColors.indexOf(user.color)), 0, meepleSize, meepleSize, 50 + (i * 25), 675, meepleSize, meepleSize);
                     }
                     ctx.restore();
                 }
@@ -903,6 +1247,11 @@ if (canvas) {
                             tile.draw(ctx, tileX, tileY, zoomTileHeight, zoomTileWidth);
                         });
                     });
+                    placedMeeples.forEach((m) => {
+                        const tileX = gameBoardX + (m.col - meepleSize/2) - deltaDragX ; 
+                        const tileY = gameBoardY + (m.row - meepleSize/2) - deltaDragY;
+                        ctx.drawImage(meepleImage, 0 + (meepleSize*playerColors.indexOf(m.color)), 0, meepleSize, meepleSize, tileX, tileY, meepleSize*0.7, meepleSize*0.7 )
+                    })
                     ctx.restore();
                     ctx.strokeRect(gameBoardX, gameBoardY, gameBoardWidth, gameBoardHeight);
                 }
@@ -942,11 +1291,9 @@ if (canvas) {
                 }
                 if (moveMeepleToggle){
                     const dragMeepleSize = meepleSize * 0.7;
-                    const meepleImage: HTMLImageElement = new Image();
-                    meepleImage.src = meeplesPath;
                     const MeepleX = dragMeepleX - dragMeepleSize/2;
                     const MeepleY = dragMeepleY - dragMeepleSize/2;
-                    ctx.drawImage(meepleImage, 0 + (80*playerColors.indexOf(userColor)), 0, 80, 80, MeepleX, MeepleY, dragMeepleSize, dragMeepleSize)
+                    ctx.drawImage(meepleImage, 0 + (80*playerColors.indexOf(user.color)), 0, 80, 80, MeepleX, MeepleY, dragMeepleSize, dragMeepleSize)
                 }
                 
             };
