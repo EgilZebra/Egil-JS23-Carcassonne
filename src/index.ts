@@ -1276,8 +1276,7 @@ if (canvas) {
                         
                 }
                 gameMap[10][10] = makeTile(12);
-                // gameMap[11][10] = makeTile(11);
-                // gameMap[12][10] = makeTile(16);
+
 
                 drawGameBoard(); 
                 drawMeeple();
