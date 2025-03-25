@@ -30,3 +30,5 @@ jobs:
       - name: Deploy to Github pages
         id: deployment
         uses: actions/deploy-pages@v3
+        with:
+          artifact_name: dist
