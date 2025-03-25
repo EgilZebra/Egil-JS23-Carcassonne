@@ -126,6 +126,11 @@ class Connection {
         this.span.push(tile);
     }
 }
+const tilePath: string = '/assets/tiles.png';
+const backsidePath: string = '/assets/backside.jpg';
+const meeplesPath: string = '/assets/meeples.png';
+const LOGO = new Image;
+LOGO.src = '/assets/Carcassonne-logo.png'
 
 const canvas = document.getElementById('canvasMain') as HTMLCanvasElement | null;
 if (canvas) {
@@ -167,12 +172,6 @@ if (canvas) {
             allPlayersStats.push(player);
         }
 
-        // const LOGOPath: string = '../assets/Carcassonne-logo.png'
-        const tilePath: string = '/assets/tiles.png';
-        const backsidePath: string = '/assets/backside.jpg';
-        const meeplesPath: string = '/assets/meeples.png';
-        const LOGO = new Image;
-        LOGO.src = '/assets/Carcassonne-logo.png'
 
         let zoomFactor = 1; 
         const zoomSpeed = 0.1;
