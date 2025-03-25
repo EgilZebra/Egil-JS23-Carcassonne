@@ -60,11 +60,11 @@ class Connection {
         this.span.push(tile);
     }
 }
-const tilePath = '../assets/tiles.png';
-const backsidePath = '../assets/backside.jpg';
-const meeplesPath = '../assets/meeples.png';
+const tilePath = './assets/tiles.png';
+const backsidePath = './assets/backside.jpg';
+const meeplesPath = './assets/meeples.png';
 const LOGO = new Image;
-LOGO.src = '../assets/Carcassonne-logo.png';
+LOGO.src = './assets/Carcassonne-logo.png';
 const canvas = document.getElementById('canvasMain');
 if (canvas) {
     const ctx = canvas.getContext('2d');
