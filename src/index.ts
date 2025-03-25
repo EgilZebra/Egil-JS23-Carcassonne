@@ -551,6 +551,7 @@ if (canvas) {
         const makeTile = (id: number) => {
             // const tileID = Math.floor(Math.random() * allTiles.length) + 1;
             const tile = new Tile(allTiles[id]);
+            tile.image = tilePath;
             return tile
         }
         const drawTile = (ctx: CanvasRenderingContext2D, id: number) => {
