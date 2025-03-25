@@ -126,11 +126,11 @@ class Connection {
         this.span.push(tile);
     }
 }
-const tilePath: string = './data/assets/tiles.png';
-const backsidePath: string = './data/assets/backside.jpg';
-const meeplesPath: string = './data/assets/meeples.png';
+const tilePath: string = '../assets/tiles.png';
+const backsidePath: string = '../assets/backside.jpg';
+const meeplesPath: string = '../assets/meeples.png';
 const LOGO = new Image;
-LOGO.src = './data/assets/Carcassonne-logo.png'
+LOGO.src = '../assets/Carcassonne-logo.png'
 
 const canvas = document.getElementById('canvasMain') as HTMLCanvasElement | null;
 if (canvas) {
