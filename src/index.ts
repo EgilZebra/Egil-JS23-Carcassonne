@@ -16,7 +16,7 @@ if (canvas) {
     if (ctx){
         const CANVAS_WIDTH: number = canvas.width = 1808;
         const CANVAS_HEIGHT: number = canvas.height = 980;
-        const avaliblePlayers = [
+        const avaliblePlayers: { name: string, color: string }[] = [
             { name: 'player1' ,  color: 'blue'},
             { name: 'player2' ,  color: 'green'},
             { name: 'player3' ,  color: 'yellow'},
@@ -350,8 +350,10 @@ if (canvas) {
 
             dragMap = false;
             moveTiletoggle = false;
+            if ( oneTurn.placeMeeple == true && moveMeepleToggle == true ) {
+                allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7
+            }
             moveMeepleToggle = false;
-            
             //allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
             
         }
@@ -1220,8 +1222,7 @@ if (canvas) {
                     const MeepleX = dragMeepleX - dragMeepleSize/2;
                     const MeepleY = dragMeepleY - dragMeepleSize/2;
                     ctx.drawImage(meepleImage, 0 + (80*playerColors.indexOf(user.color)), 0, 80, 80, MeepleX, MeepleY, dragMeepleSize, dragMeepleSize)
-                }
-                
+                }               
             };
             requestAnimationFrame(animate);
         }
