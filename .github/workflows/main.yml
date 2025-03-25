@@ -25,8 +25,8 @@ jobs:
         run: printenv
       - name: Upload dist folder
         uses: actions/upload-pages-artifact@v3
-        with: 
-          path: './dist'
+        # with: 
+        #   path: ''
       - name: Deploy to Github pages
         id: deployment
         uses: actions/deploy-pages@v3
