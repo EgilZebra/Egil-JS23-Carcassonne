@@ -15,7 +15,7 @@ interface TileOptions {
 }
 
 export const allTiles: TileOptions[] = [{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 0),
@@ -26,7 +26,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 1),
@@ -37,7 +37,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 2),
@@ -48,7 +48,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 3),
@@ -59,7 +59,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 4),
@@ -70,7 +70,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 5),
@@ -81,7 +81,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 6),
@@ -92,7 +92,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 7),
@@ -103,7 +103,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 8),
@@ -114,7 +114,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 9),
@@ -125,7 +125,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 10),
@@ -136,7 +136,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 0),
@@ -147,7 +147,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 1),
@@ -158,7 +158,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 2),
@@ -169,7 +169,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 3),
@@ -180,7 +180,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 4),
@@ -191,7 +191,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 5),
@@ -202,7 +202,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 6),
@@ -213,7 +213,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 7),
@@ -224,7 +224,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 8),
@@ -235,7 +235,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 9),
@@ -246,7 +246,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 10),
@@ -257,7 +257,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 0),
@@ -268,7 +268,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 1),
@@ -279,7 +279,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 2),
@@ -290,7 +290,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 3),
@@ -301,7 +301,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: true
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 4),
@@ -312,7 +312,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 5),
@@ -323,7 +323,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 6),
@@ -334,7 +334,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 7),
@@ -345,7 +345,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: true,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 8),
@@ -356,7 +356,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 9),
@@ -367,7 +367,7 @@ export const allTiles: TileOptions[] = [{
                 cityConnect: false,
                 roadConnect: false
             },{
-                image: './assets/tiles.png', 
+                image: '', 
                 width: 200,
                 height: 200,
                 imageStartX: 120 + (tilespaceX * 10),
