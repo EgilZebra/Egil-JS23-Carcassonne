@@ -60,11 +60,11 @@ class Connection {
         this.span.push(tile);
     }
 }
-const tilePath = '/Egil-JS23-Carcassonne/assets/tiles.png';
-const backsidePath = '/Egil-JS23-Carcassonne/assets/backside.jpg';
-const meeplesPath = '/Egil-JS23-Carcassonne/assets/meeples.png';
+const tilePath = '/data/assets/tiles.png';
+const backsidePath = '/data/assets/backside.jpg';
+const meeplesPath = '/data/assets/meeples.png';
 const LOGO = new Image;
-LOGO.src = '/Egil-JS23-Carcassonne/assets/Carcassonne-logo.png';
+LOGO.src = '/data/assets/Carcassonne-logo.png';
 const canvas = document.getElementById('canvasMain');
 if (canvas) {
     const ctx = canvas.getContext('2d');
