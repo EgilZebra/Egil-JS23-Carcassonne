@@ -24,7 +24,7 @@ jobs:
       - name: Debug Environment Variables
         run: printenv
       - name: Upload dist folder
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with: 
           path: './dist'
       - name: Deploy to Github pages
