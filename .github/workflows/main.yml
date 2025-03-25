@@ -6,26 +6,7 @@ on:
       - main
 
 jobs:
-
-  # test:
-
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install
-  #       run: npm ci
-  #     - name: run tests with coverage
-  #       run: npm run coverage
-  #     - name: Check the coverage
-  #       uses: themichaelhall/check-code-coverage@v2
-  #       with:
-  #         report: coverage/clover.xml
-  #         required-percentage: 90
-
   build:
-
-  # needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -50,4 +31,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v3
         with:
-          folder: dist
+          artifact-name: dist
+
