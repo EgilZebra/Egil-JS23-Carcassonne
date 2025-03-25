@@ -1,131 +1,9 @@
-// import { Tile } from './data/classes/tile';
-// import { Direction } from './data/types/connections';
 import { allTiles } from "./data/tiles/tiles.js";
-console.log('Hello');
-
-type TileCordinates = {
-    col: number
-    row: number
-}
-interface TileOptions {
-    image: string;
-    width: number;
-    height: number;
-    imageStartX: number;
-    imageStartY: number;
-    connections: string[];
-    monastery: boolean;
-    badge: boolean;
-    cityConnect: boolean;
-    roadConnect: boolean
-}
-class Tile {
-    image: string
-    width: number
-    height: number
-    imageStartX: number
-    imageStartY: number
-    connect: string[]
-    monastery: boolean
-    cityBadge: boolean
-    cityConnect: boolean
-    roadConnect: boolean
-    private rotationAngle: number
-    private img: HTMLImageElement
-    constructor({
-            image, 
-            width,
-            height,
-            imageStartX,
-            imageStartY,
-            connections,
-            monastery,
-            badge,
-            cityConnect,
-            roadConnect
-        }: TileOptions ){
-            this.image = image,
-            this.width = width,
-            this.height = height,
-            this.imageStartX = imageStartX,
-            this.imageStartY = imageStartY,
-            this.connect = connections,
-            this.monastery = monastery,
-            this.cityBadge = badge,
-            this.cityConnect = cityConnect,
-            this.roadConnect = roadConnect
-            this.rotationAngle = 0,
-            this.img = new Image(),
-            this.img.src = this.image
-    }
-    update(){
-        
-    }
-    draw(ctx: CanvasRenderingContext2D, dx: number, dy: number, dWidth: number, dHeight: number){
-        ctx.save();
-        ctx.translate(dx + dWidth / 2, dy + dHeight / 2);
-        ctx.rotate((this.rotationAngle * Math.PI) / 180);
-        ctx.drawImage(this.img, this.imageStartX, this.imageStartY, this.width, this.height, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
-        ctx.restore();       
-    }
-    rotate(){
-        this.rotationAngle += 90;
-        const lastDirection: string | undefined = this.connect.pop();
-        if (lastDirection !== undefined) {
-            this.connect.unshift(lastDirection);
-        };
-        
-    }
-}
-class Turn {
-    player: string
-    turn: number
-    drawTile: boolean
-    TileDrawn: Tile
-    placeTile: boolean
-    TilePlace: TileCordinates
-    placeMeeple: boolean
-    MeeplePlaced: any
-    endTurn: boolean
-    constructor(
-        player: string,
-        turn: number,
-        drawTile: boolean,
-        TileDrawn: Tile,
-        placeTile: boolean,
-        TilePlace: TileCordinates,
-        placeMeeple: boolean,
-        MeeplePlaced: any,
-        endTurn: boolean,
-    ){
-        this.player = player
-        this.turn = turn
-        this.drawTile = drawTile
-        this.TileDrawn = TileDrawn
-        this.placeTile = placeTile
-        this.TilePlace = TilePlace
-        this.placeMeeple = placeMeeple
-        this.MeeplePlaced = MeeplePlaced
-        this.endTurn = endTurn
-    };
-}
-class Connection {
-    type: string
-    span: Array<TileCordinates>
-    user: string[]
-    constructor({
-        type,
-        span = [],
-        user
-    }: any ){
-        this.type = type;
-        this.span = span;
-        this.user = user
-    }
-    add(tile: TileCordinates){
-        this.span.push(tile);
-    }
-}
+import { TileCordinates } from "./data/types/tileCordinates.js";
+import { TileOptions } from "./data/types/tileOptions.js";
+import { Tile } from "./data/classes/tile.js";
+import { Turn } from "./data/classes/turn.js";
+import { Connection } from "./data/classes/connection.js";
 const tilePath: string = './assets/tiles.png';
 const backsidePath: string = './assets/backside.jpg';
 const meeplesPath: string = './assets/meeples.png';
@@ -138,7 +16,6 @@ if (canvas) {
     if (ctx){
         const CANVAS_WIDTH: number = canvas.width = 1808;
         const CANVAS_HEIGHT: number = canvas.height = 980;
-
         const avaliblePlayers = [
             { name: 'player1' ,  color: 'blue'},
             { name: 'player2' ,  color: 'green'},
@@ -149,7 +26,6 @@ if (canvas) {
         let completedTurns: Turn[] = [];
         const players = 2;
         let currentPlayer = 0;
-       
         let oneTurn = {
             player: avaliblePlayers[currentPlayer].name, 
             turn: 1,
@@ -171,25 +47,20 @@ if (canvas) {
             }
             allPlayersStats.push(player);
         }
-
-
         let zoomFactor = 1; 
         const zoomSpeed = 0.1;
         const maxZoom = 1.2; 
         const minZoom = 0.8;
-
         let tileHeight = 145;
         let zoomTileHeight = tileHeight;
         let tileWidth = 145;
         let zoomTileWidth = tileWidth;
-
         let gameBoardX = 320;
         let gameBoardY = 200;
         let gameBoardWidth = 1445;
         let gameBoardHeight = 750;
         const gameBoardTiles = 20;
         const playableTilesBorderWidth = 3;
-
         let playableTiles: TileCordinates[] = [];
         let usedTiles: TileCordinates[] = [];
         let moveTiletoggle: boolean = false;
@@ -197,14 +68,12 @@ if (canvas) {
         let deltaDragTileX: number = 0;
         let dragTileY: number = 0;
         let deltaDragTileY: number = 0;
-
         let moveMeepleToggle: boolean = false;
         let dragMeepleX: number = 0;
         let deltaDragMeepleX: number = 0;
         let dragMeepleY: number = 0;
         let deltaDragMeepleY: number = 0;
         const meepleSize: number = 80;
-
         const playerColors: string[] = [
             'blue',
             'green',
@@ -212,12 +81,10 @@ if (canvas) {
             'red',
             'black',
         ]
-
         const maxMeeples: number = 7;
         let placedMeeples: {col: number, row: number, color: string}[]  = [];
         const meepleImage: HTMLImageElement = new Image();
         meepleImage.src = meeplesPath;
-
         let connectedTiles: Array<Connection> = [];
         let finishedConnections: Array<Connection> = [];
     
@@ -241,7 +108,7 @@ if (canvas) {
 
         for ( let i = 0; i < gameBoardTiles; i++ ){
             if (gameMap.length < gameBoardTiles) {
-            gameMap.push([]) 
+                gameMap.push([]) 
             }
             for (let j = 0; j < gameBoardTiles; j++){
                 const empltyTile = new Tile({
@@ -1203,60 +1070,61 @@ if (canvas) {
             })
         }
         const newGame = () => {
-            let completedTurns: Turn[] = [];
-            const players = 2;
-            let currentPlayer = 0;
+            window.location.reload();
+            // let completedTurns: Turn[] = [];
+            // const players = 2;
+            // let currentPlayer = 0;
         
-            let oneTurn = {
-                player: avaliblePlayers[currentPlayer].name, 
-                turn: 1,
-                drawTile: true,
-                placeTile: false,
-                placeMeeple: false,
-                turnOver: false
-            }
-            let user = avaliblePlayers[currentPlayer];
-            let gamePoints: number = 0;
-            let gameTurn: number = 1;
-            const allPlayersStats: {name: string, remainingMeeples: number, color: string, points: number}[] = []; 
-            for ( let i = 0; i < players; i++) {
-                const player = {
-                    name: user.name,
-                    remainingMeeples: 7,
-                    color: user.color,
-                    points: 0
-                }
-                allPlayersStats.push(player);
-            }
-            for ( let i = 0; i < gameBoardTiles; i++ ){
-                if (gameMap.length < gameBoardTiles) {
-                gameMap.push([]) 
-                }
-                for (let j = 0; j < gameBoardTiles; j++){
-                    const empltyTile = new Tile({
-                        image: backsidePath, 
-                        width: 224, 
-                        height: 224, 
-                        imageStartX: 0,
-                        imageStartY: 0,
-                        connections: ['', '', '', ''],
-                        monastery: false,
-                        badge: false,
-                        cityConnect: false,
-                        roadConnect: false
-                    })
-                    gameMap[i].push(empltyTile);
-                }
-            }
-            placedMeeples = [];
-            connectedTiles = [];
-            finishedConnections = [];
-            dragMapX = 0;
-            dragMapY = 0;
-            deltaDragX = gameMap[0].length * tileWidth * 0.3;
-            deltaDragY = gameMap.length * tileHeight * 0.4;
-            playableTiles = [];
-            usedTiles = [];
+            // let oneTurn = {
+            //     player: avaliblePlayers[currentPlayer].name, 
+            //     turn: 1,
+            //     drawTile: true,
+            //     placeTile: false,
+            //     placeMeeple: false,
+            //     turnOver: false
+            // }
+            // let user = avaliblePlayers[currentPlayer];
+            // let gamePoints: number = 0;
+            // let gameTurn: number = 1;
+            // const allPlayersStats: {name: string, remainingMeeples: number, color: string, points: number}[] = []; 
+            // for ( let i = 0; i < players; i++) {
+            //     const player = {
+            //         name: user.name,
+            //         remainingMeeples: 7,
+            //         color: user.color,
+            //         points: 0
+            //     }
+            //     allPlayersStats.push(player);
+            // }
+            // for ( let i = 0; i < gameBoardTiles; i++ ){
+            //     if (gameMap.length < gameBoardTiles) {
+            //     gameMap.push([]) 
+            //     }
+            //     for (let j = 0; j < gameBoardTiles; j++){
+            //         const empltyTile = new Tile({
+            //             image: backsidePath, 
+            //             width: 224, 
+            //             height: 224, 
+            //             imageStartX: 0,
+            //             imageStartY: 0,
+            //             connections: ['', '', '', ''],
+            //             monastery: false,
+            //             badge: false,
+            //             cityConnect: false,
+            //             roadConnect: false
+            //         })
+            //         gameMap[i].push(empltyTile);
+            //     }
+            // }
+            // placedMeeples = [];
+            // connectedTiles = [];
+            // finishedConnections = [];
+            // dragMapX = 0;
+            // dragMapY = 0;
+            // deltaDragX = gameMap[0].length * tileWidth * 0.3;
+            // deltaDragY = gameMap.length * tileHeight * 0.4;
+            // playableTiles = [];
+            // usedTiles = [];
         }
 
         function animate() {
