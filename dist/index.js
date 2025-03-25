@@ -117,7 +117,7 @@ if (canvas) {
         const gameBoardTiles = 20;
         const playableTilesBorderWidth = 3;
         let playableTiles = [];
-        const usedTiles = [];
+        let usedTiles = [];
         let moveTiletoggle = false;
         let dragTileX = 0;
         let deltaDragTileX = 0;
@@ -256,6 +256,9 @@ if (canvas) {
                 oneTurn.turnOver = true;
                 countPoints();
                 switchTurns();
+            }
+            if (scaledMouseX > 780 && scaledMouseX < 780 + 220 && scaledMouseY > 100 && scaledMouseY < 100 + 55) {
+                newGame();
             }
         };
         canvas.onmousedown = checkMouse;
@@ -977,7 +980,7 @@ if (canvas) {
                 console.log(completedTurns);
                 oneTurn = {
                     player: avaliblePlayers[currentPlayer].name,
-                    turn: 1,
+                    turn: gameTurn,
                     drawTile: true,
                     placeTile: false,
                     placeMeeple: false,
@@ -1015,6 +1018,61 @@ if (canvas) {
                     });
                 }
             });
+        };
+        const newGame = () => {
+            let completedTurns = [];
+            const players = 2;
+            let currentPlayer = 0;
+            let oneTurn = {
+                player: avaliblePlayers[currentPlayer].name,
+                turn: 1,
+                drawTile: true,
+                placeTile: false,
+                placeMeeple: false,
+                turnOver: false
+            };
+            let user = avaliblePlayers[currentPlayer];
+            let gamePoints = 0;
+            let gameTurn = 1;
+            const allPlayersStats = [];
+            for (let i = 0; i < players; i++) {
+                const player = {
+                    name: user.name,
+                    remainingMeeples: 7,
+                    color: user.color,
+                    points: 0
+                };
+                allPlayersStats.push(player);
+            }
+            for (let i = 0; i < gameBoardTiles; i++) {
+                if (gameMap.length < gameBoardTiles) {
+                    gameMap.push([]);
+                }
+                for (let j = 0; j < gameBoardTiles; j++) {
+                    const empltyTile = new Tile({
+                        image: backsidePath,
+                        width: 224,
+                        height: 224,
+                        imageStartX: 0,
+                        imageStartY: 0,
+                        connections: ['', '', '', ''],
+                        monastery: false,
+                        badge: false,
+                        cityConnect: false,
+                        roadConnect: false
+                    });
+                    gameMap[i].push(empltyTile);
+                }
+            }
+            placedMeeples = [];
+            connectedTiles = [];
+            finishedConnections = [];
+            dragMapX = 0;
+            dragMapY = 0;
+            deltaDragX = gameMap[0].length * tileWidth * 0.3;
+            deltaDragY = gameMap.length * tileHeight * 0.4;
+            playableTiles = [];
+            usedTiles = [];
         };
         function animate() {
             // Create the ui
