@@ -348,9 +348,10 @@ if (canvas) {
                 console.log(placedMeeples);
             }
 
+
             dragMap = false;
             moveTiletoggle = false;
-            if ( oneTurn.placeMeeple == true && moveMeepleToggle == true ) {
+            if ( oneTurn.placeMeeple && moveMeepleToggle ) {
                 allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7
             }
             moveMeepleToggle = false;
