@@ -208,7 +208,7 @@ if (canvas) {
                 }
                 
             }
-            if (scaledMouseX > 50 && scaledMouseX < 50 + (allPlayersStats[currentPlayer].remainingMeeples * 25) && scaledMouseY > 700 && scaledMouseY < 700+80){
+            if ( oneTurn.placeMeeple && scaledMouseX > 50 && scaledMouseX < 50 + (allPlayersStats[currentPlayer].remainingMeeples * 25) && scaledMouseY > 700 && scaledMouseY < 700+80){
                 console.log('mEEEPLE!');
                 moveMeepleToggle = true;
                 allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples - 1 >= 0) ? (allPlayersStats[currentPlayer].remainingMeeples - 1) : 0;
