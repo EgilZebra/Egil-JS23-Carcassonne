@@ -186,7 +186,7 @@ if (canvas) {
                     // You can do something with the clickedTile here, such as rotating it or modifying its state
                 }
             }
-            if (scaledMouseX > 50 && scaledMouseX < 50 + (allPlayersStats[currentPlayer].remainingMeeples * 25) && scaledMouseY > 700 && scaledMouseY < 700 + 80) {
+            if (oneTurn.placeMeeple && scaledMouseX > 50 && scaledMouseX < 50 + (allPlayersStats[currentPlayer].remainingMeeples * 25) && scaledMouseY > 700 && scaledMouseY < 700 + 80) {
                 console.log('mEEEPLE!');
                 moveMeepleToggle = true;
                 allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples - 1 >= 0) ? (allPlayersStats[currentPlayer].remainingMeeples - 1) : 0;
@@ -326,6 +326,9 @@ if (canvas) {
             }
             dragMap = false;
             moveTiletoggle = false;
+            if (oneTurn.placeMeeple == true && moveMeepleToggle == true) {
+                allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
+            }
             moveMeepleToggle = false;
             //allPlayersStats[currentPlayer].remainingMeeples = (allPlayersStats[currentPlayer].remainingMeeples + 1 <= 7) ? (allPlayersStats[currentPlayer].remainingMeeples + 1) : 7;
         };
