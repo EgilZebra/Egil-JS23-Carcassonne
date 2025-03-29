@@ -2,7 +2,6 @@ Egil Ramsten
 JS23-25
 Carcassonne - Examensarbete
 
-
 **Come and play the classic boardgame, now online.**
 
 * Gameplay * 
