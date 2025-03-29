@@ -16,4 +16,9 @@ export class Connection {
     add(tile: TileCordinates){
         this.span.push(tile);
     }
+    contains(otherConnection: Connection): boolean {
+        return otherConnection.span.every(tile => 
+            this.span.some(existingTile => existingTile.col === tile.col && existingTile.row === tile.row)
+        );
+    }
 };
